@@ -1,0 +1,2 @@
+# ecalc
+Command line calculator
