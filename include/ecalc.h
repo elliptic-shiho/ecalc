@@ -63,6 +63,10 @@ typedef enum {
   T_MUL,
   T_DIV,
   T_POW,
+  T_OR,
+  T_AND,
+  T_NOT,
+  T_XOR,
   T_NUM,
   T_OPEN_BRACKET,
   T_CLOSE_BRACKET,
@@ -75,6 +79,10 @@ typedef enum {
   OP_MUL,
   OP_DIV,
   OP_POW,
+  OP_OR,
+  OP_AND,
+  OP_NOT,
+  OP_XOR,
   OP_NUM,
 } Opcode;
 
@@ -101,6 +109,7 @@ extern void parse(void);
 extern void parse_expression(void);
 extern void parse_primary_expression(void);
 extern void parse_term(void);
+extern void parse_not(void);
 extern void parse_number(void);
 
 /* at lex.c */

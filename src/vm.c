@@ -41,6 +41,25 @@ void vm_execute (void) {
       j = stack[--sp];
       stack[sp++] = pow(j, i);
       break;
+    case OP_OR:;
+      i = stack[--sp];
+      j = stack[--sp];
+      stack[sp++] = i | j;
+      break;
+    case OP_AND:;
+      i = stack[--sp];
+      j = stack[--sp];
+      stack[sp++] = i & j;
+      break;
+    case OP_NOT:;
+      i = stack[--sp];
+      stack[sp++] = ~i;
+      break;
+    case OP_XOR:;
+      i = stack[--sp];
+      j = stack[--sp];
+      stack[sp++] = i ^ j;
+      break;
     }
   }
 

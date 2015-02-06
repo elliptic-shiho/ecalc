@@ -17,16 +17,28 @@ void parse_expression(void) {
   parse_term();
   for(;;) {
     t = get_token();
-    if (t.type != T_ADD && t.type != T_SUB) {
+    if (t.type != T_ADD &&
+        t.type != T_SUB &&
+        t.type != T_OR &&
+        t.type != T_AND &&
+        t.type != T_XOR) {
       unget_token();
       break;
     }
     parse_term();
+    Opcode op;
     if (t.type == T_ADD) {
-      vm_add_opcode(OP_ADD);
+      op = OP_ADD;
     } else if (t.type == T_SUB) {
-      vm_add_opcode(OP_SUB);
+      op = OP_SUB;
+    } else if (t.type == T_OR) {
+      op = OP_OR;
+    } else if (t.type == T_AND) {
+      op = T_AND;
+    } else if (t.type == T_XOR) {
+      op = T_XOR;
     }
+    vm_add_opcode(op);
   }
 }
 
@@ -63,7 +75,18 @@ void parse_primary_expression(void) {
     }
   } else {
     unget_token();
-    parse_number();
+    parse_not();
+  }
+}
+
+void parse_not(void) {
+  Token t = get_token();
+  if (t.type != T_NOT) {
+    unget_token();
+  }
+  parse_number();
+  if (t.type == T_NOT) {
+    vm_add_opcode(OP_NOT);
   }
 }
 

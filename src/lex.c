@@ -36,6 +36,18 @@ void lexical_analyze(void) {
     case ')':
       t->type = T_CLOSE_BRACKET;
       break;
+    case '|':
+      t->type = T_OR;
+      break;
+    case '&':
+      t->type = T_AND;
+      break;
+    case '~':
+      t->type = T_NOT;
+      break;
+    case '^':
+      t->type = T_XOR;
+      break;
     default:
       if ((c >= '0' && c <= '9') ||
           ((c == 'X' || (c <= 'F' && c >= 'A')) &&
