@@ -51,9 +51,10 @@ void vm_execute (void) {
   printf("(hex) = 0x%x\n", stack[0]);
   printf("(bin) = 0b");
   char bin[32] = {0};
+  uint ui = stack[0];
 
-  for(i = stack[0], j = 0; i != 0;i /= 2, j++) {
-    bin[j] = i % 2;
+  for(j = 0; ui != 0;ui /= 2, j++) {
+    bin[j] = ui % 2;
   }
   DIRECTION_FOR(j, 31, bin[j] == 0 && j >= 0, D_BACK);
   if ( j == -1 ){
