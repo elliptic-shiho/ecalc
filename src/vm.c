@@ -24,7 +24,7 @@ void vm_execute (void) {
     case OP_SUB:;
       i = stack[--sp];
       j = stack[--sp];
-      stack[sp++] = i - j;
+      stack[sp++] = j - i;
       break;
     case OP_MUL:;
       i = stack[--sp];
@@ -34,7 +34,7 @@ void vm_execute (void) {
     case OP_DIV:;
       i = stack[--sp];
       j = stack[--sp];
-      stack[sp++] = i / j;
+      stack[sp++] = j / i;
       break;
     case OP_POW:;
       i = stack[--sp];
@@ -44,12 +44,12 @@ void vm_execute (void) {
     case OP_OR:;
       i = stack[--sp];
       j = stack[--sp];
-      stack[sp++] = i | j;
+      stack[sp++] = j | i;
       break;
     case OP_AND:;
       i = stack[--sp];
       j = stack[--sp];
-      stack[sp++] = i & j;
+      stack[sp++] = j & i;
       break;
     case OP_NOT:;
       i = stack[--sp];
@@ -58,7 +58,7 @@ void vm_execute (void) {
     case OP_XOR:;
       i = stack[--sp];
       j = stack[--sp];
-      stack[sp++] = i ^ j;
+      stack[sp++] = j ^ i;
       break;
     }
   }

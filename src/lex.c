@@ -12,14 +12,15 @@ void lexical_analyze(void) {
       t->type = T_ADD;
       break;
     case '-':
-      if (((Token*)ll_get_data(g_token, (uint)(ll_get_pos(g_token) - 1)))->type != T_NUM) { // Minus Sign
+      if (ll_count(g_token) < 1 || ((Token*)ll_get_data(g_token, (uint)(ll_get_pos(g_token))))->type != T_NUM) { // Minus Sign
         t->type = T_NUM;
+        t->value = '-';
       } else {
         t->type = T_SUB;
       }
       break;
     case '*':
-      if (((Token*)ll_get_data(g_token, (uint)(ll_get_pos(g_token))))->type == T_MUL) {
+      if (ll_count(g_token) > 0 && ((Token*)ll_get_data(g_token, (uint)(ll_get_pos(g_token))))->type == T_MUL) {
         Token *mul_t = (Token*)ll_remove_data(g_token, (uint)(ll_get_pos(g_token)));
         FREE(mul_t);
         t->type = T_POW;
