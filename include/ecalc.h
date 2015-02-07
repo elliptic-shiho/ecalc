@@ -27,9 +27,9 @@ if (!IS_EFFECTIVE_PTR(x)) { \
 free(x); \
 x = ((void*)0xdeadbeef); \
 } while(0)
-# if defined(NDEBUG)
+# ifdef NDEBUG
 #  define CHK_DEBUG()
-#  define DEBUG(x)
+#  define DEBUG(x, ...)
 # else
 #  define CHK_DEBUG() fprintf(stderr, "%s:%d <%s>\n", __FILE__, __LINE__, __FUNCTION__)
 #  define DEBUG(x, ...) do {\
@@ -37,7 +37,7 @@ x = ((void*)0xdeadbeef); \
   fprintf(stderr, x, __VA_ARGS__); \
   fprintf(stderr, "\n"); \
 } while (0)
-# endif
+# endif /* end of NDEBUG */
 
 # define ERROR(...) fprintf(stderr, "ERROR occured: "); fprintf(stderr, __VA_ARGS__); fprintf(stderr, "\nat: file: %s, function: %s, line: %d\n\n", __FILE__, __FUNCTION__, __LINE__)
 

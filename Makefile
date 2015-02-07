@@ -9,8 +9,8 @@ LD = gcc
 RM = rm
 CD = cd
 AS = nasm
-#CFLAGS = -g -O0 -Wall -Wextra -I$(INCDIR) -D_FORTIFY_SOURCE=2 -masm=intel
-CFLAGS = -Wall -Wextra -I$(INCDIR) -D_FORTIFY_SOURCE=2 -masm=intel
+CFLAGS = -g -O0 -Wall -Wextra -I$(INCDIR) -D_FORTIFY_SOURCE=2 -masm=intel
+#CFLAGS = -Wall -Wextra -I$(INCDIR) -D_FORTIFY_SOURCE=2 -masm=intel -DNDEBUG
 LDFLAGS = -lm
 ASFLAGS = -f elf
 

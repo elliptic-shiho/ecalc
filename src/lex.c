@@ -1,5 +1,7 @@
 #include "ecalc.h"
 
+#define GET_CURRENT_TOKEN() ((Token*)ll_get_data(g_token, (uint)(ll_get_pos(g_token))))
+
 void lexical_analyze(void) {
   g_token = ll_get_instance();
   PTR(t, Token);
@@ -12,7 +14,7 @@ void lexical_analyze(void) {
       t->type = T_ADD;
       break;
     case '-':
-      if (ll_count(g_token) < 1 || ((Token*)ll_get_data(g_token, (uint)(ll_get_pos(g_token))))->type != T_NUM) { // Minus Sign
+      if (ll_count(g_token) < 1 || GET_CURRENT_TOKEN()->type != T_NUM) { // Minus Sign
         t->type = T_NUM;
         t->value = '-';
       } else {
@@ -20,7 +22,7 @@ void lexical_analyze(void) {
       }
       break;
     case '*':
-      if (ll_count(g_token) > 0 && ((Token*)ll_get_data(g_token, (uint)(ll_get_pos(g_token))))->type == T_MUL) {
+      if (ll_count(g_token) > 0 && GET_CURRENT_TOKEN()->type == T_MUL) {
         Token *mul_t = (Token*)ll_remove_data(g_token, (uint)(ll_get_pos(g_token)));
         FREE(mul_t);
         t->type = T_POW;
@@ -32,9 +34,11 @@ void lexical_analyze(void) {
       t->type = T_DIV;
       break;
     case '(':
+    case '{':
       t->type = T_OPEN_BRACKET;
       break;
     case ')':
+    case '}':
       t->type = T_CLOSE_BRACKET;
       break;
     case '|':
@@ -51,8 +55,8 @@ void lexical_analyze(void) {
       break;
     default:
       if ((c >= '0' && c <= '9') ||
-          ((c == 'X' || (c <= 'F' && c >= 'A')) &&
-           ((Token*)ll_get_data(g_token, (uint)(ll_get_pos(g_token))))->type == T_NUM)) {
+         ((c == 'X' || (c <= 'F' && c >= 'A')) &&
+           GET_CURRENT_TOKEN()->type == T_NUM)) {
         t->type = T_NUM;
         t->value = c;
         break;
