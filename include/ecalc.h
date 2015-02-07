@@ -7,6 +7,8 @@
 # include <stdarg.h>
 # include <math.h>
 # include <ctype.h>
+# include "LinkedList.h"
+# include "Stack.h"
 
 #define IS_EFFECTIVE_PTR(ptr) (((ptr) != NULL) && (ptr) != ((void*)0xdeadbeef))
 #define PTR(x, type) type *x = NULL;
@@ -93,10 +95,6 @@ typedef struct {
 
 typedef unsigned int uint;
 
-typedef void* LLData_t;
-typedef void (*fptr_lleach_t)(LLData_t);
-typedef struct linkedlist_t *LinkedList;
-
 /* at main.c */
 extern char *g_expression;
 extern LinkedList g_token;
@@ -121,18 +119,5 @@ extern void vm_init(void);
 extern void vm_free(void);
 extern void vm_execute(void);
 extern void vm_add_opcode(Opcode opcode, ...);
-
-/* at LinkedList.c */
-extern LinkedList ll_get_instance(void);
-extern void ll_add(LinkedList, LLData_t);
-extern void ll_set_pos(LinkedList, uint);
-extern void ll_set_pos_relative(LinkedList, int);
-extern uint ll_get_pos(LinkedList);
-extern LLData_t ll_get_data(LinkedList, uint);
-extern LLData_t ll_get_current_data(LinkedList);
-extern LLData_t ll_remove_data(LinkedList, uint);
-extern void ll_foreach(LinkedList, fptr_lleach_t, uint);
-extern size_t ll_count(LinkedList);
-extern void ll_free(LinkedList);
 
 #endif

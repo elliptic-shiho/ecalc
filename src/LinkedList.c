@@ -1,9 +1,9 @@
 /* 
- * linkedlist.c
- * Copyright (c) 2015 author: eshiho
+ * LinkedList.c
+ * Copyright (c) 2015 Shiho Midorikawa
  */
-#define NO_DEF_LL
 #include "ecalc.h"
+#include "LinkedList.h"
 
 /* Node and LinkedList struct entity*/
 

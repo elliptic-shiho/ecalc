@@ -32,9 +32,13 @@ int main (int ac, char **av) {
   }
   g_expression = av[1];
   vm_init();
+
   lexical_analyze();
+
   parse();
+
   vm_execute();
+
   free_token();
   vm_free();
   return 0;
