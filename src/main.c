@@ -30,10 +30,10 @@ int main (int ac, char **av) {
     fprintf(stderr, "Usage: %s Expression\n", av[0]);
     return -1;
   }
-  int i;
-  g_expression = av[1];
-  for (i = 2; i < ac; i++) {
-    g_expression = strcat(g_expression, av[i]);
+  ac -= 1;
+  g_expression = "";
+  for (; ac > 0; ac--) {
+    g_expression = strcat(av[ac], g_expression);
   }
   vm_init();
 
