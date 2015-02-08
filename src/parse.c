@@ -84,50 +84,49 @@ void parse_not(void) {
   if (t.type != T_NOT) {
     unget_token();
   }
-  parse_number();
+  parse_split_expression();
   if (t.type == T_NOT) {
     vm_add_opcode(OP_NOT);
   }
+}
+
+void parse_split_expression(void) {
+  Token t;
+  t = get_token();
+  if (t.type != T_SPLIT) {
+    unget_token();
+    parse_number();
+    return;
+  }
+  vm_add_opcode(OP_PRINT);
+  parse_expression();
 }
 
 void parse_number(void) {
   numtypes_t t = NONE;
   int value = 0;
   int i = 1;
+  uint j = 0;
   Token token;
-  do {
-      token = get_token();
-      if (token.type != T_NUM) {
-        unget_token();
-        break;
-      }
-      if (t == NONE && token.value == '0') continue;
-      if (t == NONE) {
-        switch(token.value) {
-        case '-':
-          i = -1;
-          continue;
-        case 'X':
-          t = HEXADECIMAL;
-          continue;
-        case 'B':
-          t = BINARY;
-          continue;
-        case '0':
-        case '1':
-        case '2':
-        case '3':
-        case '4':
-        case '5':
-        case '6':
-        case '7':
-        case '8':
-        case '9':
-          t = DECIMAL;
-          break;
-        }
-      }
-      switch(token.value) {
+  token = get_token();
+  if (token.type != T_NUM) {
+    fprintf(stderr, "Syntax Error: Invalid Token\n");
+    exit(-1);
+  }
+  for (j = 0; j < strlen(token.value); j++) {
+    char ch = token.value[j];
+    if (t == NONE && ch == '0') continue;
+    if (t == NONE) {
+      switch(ch) {
+      case '-':
+        i = -1;
+        continue;
+      case 'X':
+        t = HEXADECIMAL;
+        continue;
+      case 'B':
+        t = BINARY;
+        continue;
       case '0':
       case '1':
       case '2':
@@ -138,49 +137,64 @@ void parse_number(void) {
       case '7':
       case '8':
       case '9':
-      case 'A':
-      case 'B':
-      case 'C':
-      case 'D':
-      case 'E':
-      case 'F':
-        switch(t) {
-        case BINARY:
-          // '0' <= c <= '9' && 'A' <= c <= 'F' && 'a' <= c <= 'f'
-          // -> c - 1 <= '0' -> c == '0' or '1'
-          if (token.value - 1 <= '0') {
-            value *= 2;
-            value += token.value - '0';
-          } else {
-            fprintf(stderr, "Error: Invalid Binary String : %02x\n", token.value);
-            exit(-1);
-          } 
-          break;
-        case DECIMAL:
-          // similar BINARY
-          // c - 9 <= '0' == 0x30 <= c <= '9'
-          if (token.value - 9 <= '0') {
-            value *= 10;
-            value += token.value - '0';
-          } else {
-            fprintf(stderr, "Error: Invalid Decimal String : %02x\n", token.value);
-            exit(-1);
-          }
-          break;
-        case HEXADECIMAL:
-          value *= 16;
-          if (token.value <= '9') {
-            value += token.value - '0';
-          } else if (token.value <= 'f') {
-            value += 10 + token.value - 'A';
-          }
-          break;
-        case NONE:
-          // should be not come here
-          break;
-        }
+        t = DECIMAL;
         break;
       }
-    } while(1);
+    }
+    switch(ch) {
+    case '0':
+    case '1':
+    case '2':
+    case '3':
+    case '4':
+    case '5':
+    case '6':
+    case '7':
+    case '8':
+    case '9':
+    case 'A':
+    case 'B':
+    case 'C':
+    case 'D':
+    case 'E':
+    case 'F':
+      switch(t) {
+      case BINARY:
+        // '0' <= c <= '9' && 'A' <= c <= 'F' && 'a' <= c <= 'f'
+        // -> c - 1 <= '0' -> c == '0' or '1'
+        if (ch - 1 <= '0') {
+          value *= 2;
+          value += ch - '0';
+        } else {
+          fprintf(stderr, "Error: Invalid Binary String : %02x\n", ch);
+          exit(-1);
+        } 
+        break;
+      case DECIMAL:
+        // similar BINARY
+        // c - 9 <= '0' == 0x30 <= c <= '9'
+        if (ch - 9 <= '0') {
+          value *= 10;
+          value += ch - '0';
+        } else {
+          fprintf(stderr, "Error: Invalid Decimal String : %02x\n", ch);
+          exit(-1);
+        }
+        break;
+      case HEXADECIMAL:
+        value *= 16;
+        if (ch <= '9') {
+          value += ch - '0';
+        } else if (ch <= 'f') {
+          value += 10 + ch - 'A';
+        }
+        break;
+      case NONE:
+        // should be not come here
+        break;
+      }
+      break;
+    }
+  }
   vm_add_opcode(OP_NUM, value * i);
 }

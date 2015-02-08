@@ -60,21 +60,30 @@ void vm_execute (void) {
       i = (int)stack_pop(stack);
       stack_push(stack, (StackData)(i ^ j));
       break;
+    case OP_PRINT:
+      vm_print(stack);
+      break;
     }
   }
 
   ll_foreach(g_bytecode, f, 0);
+  vm_print(stack);
+  stack_free(stack);
+}
 
+void vm_print(Stack stack) {
   int data = 0;
+  uint ui;
+  int i, j;
+  char bin[32] = {0};
   for(; stack_count(stack) > 0; data = (int)stack_pop(stack));
 
   printf("(signed decimal)   = %d\n", data);
   printf("(unsigned decimal) = %u\n", data);
   printf("(hex)              = 0x%x\n", data);
   printf("(bin)              = 0b");
-  char bin[32] = {0};
-  uint ui = data;
 
+  ui = data;
   for(j = 0; ui != 0;ui /= 2, j++) {
     bin[j] = ui % 2;
   }
@@ -86,8 +95,7 @@ void vm_execute (void) {
       printf("%d", bin[i]);
     }
   }
-  printf("\n");
-  stack_free(stack);
+  printf("\n\n");
 }
 
 void vm_init(void) {

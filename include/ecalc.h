@@ -47,6 +47,8 @@ x = ((void*)0xdeadbeef); \
   uint __each_counter = 0; \
   for (__each_counter = 0; __each_counter < size; func(array[__each_counter++])); \
 } while(0)
+
+
 typedef enum {
   D_FORWARD = 1,
   D_BACK = -1
@@ -72,6 +74,7 @@ typedef enum {
   T_NUM,
   T_OPEN_BRACKET,
   T_CLOSE_BRACKET,
+  T_SPLIT,
   T_EOF,
 } TokenKind;
 
@@ -86,11 +89,12 @@ typedef enum {
   OP_NOT,
   OP_XOR,
   OP_NUM,
+  OP_PRINT,
 } Opcode;
 
 typedef struct {
   TokenKind type;
-  char value;
+  char* value;
 } Token;
 
 typedef unsigned int uint;
@@ -108,6 +112,7 @@ extern void parse_expression(void);
 extern void parse_primary_expression(void);
 extern void parse_term(void);
 extern void parse_not(void);
+extern void parse_split_expression(void);
 extern void parse_number(void);
 
 /* at lex.c */
@@ -118,6 +123,7 @@ extern LinkedList g_bytecode;
 extern void vm_init(void);
 extern void vm_free(void);
 extern void vm_execute(void);
-extern void vm_add_opcode(Opcode opcode, ...);
+extern void vm_add_opcode(Opcode, ...);
+extern void vm_print(Stack);
 
 #endif
