@@ -19,7 +19,9 @@ void unget_token(void) {
 
 void free_token(void) {
   void f(LLData_t t) {
-    FREE(t);
+    Token *token = (Token*) t;
+    DEBUG("%p", token);
+    FREE(token);
   }
   ll_foreach(g_token, f, 0);
   ll_free(g_token);

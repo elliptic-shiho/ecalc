@@ -6,10 +6,12 @@ Token* gen_token(TokenKind kind, char* value) {
   PTR(t, Token);
   MALLOC(t, Token, 1);
   if (kind == T_NONE) {
+    FREE(t);
     return NULL;
   }
   t->type = kind;
   t->value = value;
+  DEBUG("%p", t);
   return t;
 }
 
@@ -92,6 +94,7 @@ void lexical_analyze(void) {
     ret = gen_token(t.type, t.value);
     if (ret != NULL) {
       ll_add(g_token, ret);
+      DEBUG("%p", ret);
     }
     t.type = T_NONE;
     t.value = NULL;
@@ -101,7 +104,9 @@ void lexical_analyze(void) {
 
   EACH_ARRAY(f, g_expression, strlen(g_expression));
 
-  ll_add(g_token, gen_token(T_EOF, NULL));
+  ret = gen_token(T_EOF, NULL);
+  DEBUG("%p", ret);
+  ll_add(g_token, ret);
 
   ll_set_pos(g_token, 0);
 }

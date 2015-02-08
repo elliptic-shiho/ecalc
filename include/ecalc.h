@@ -24,6 +24,7 @@ if (!IS_EFFECTIVE_PTR(x)) { \
   ERROR("Already done free: %s", #x); \
   exit(-1); \
 } \
+DEBUG("FREE: %p", x); \
 free(x); \
 x = ((void*)0xdeadbeef); \
 } while(0)
