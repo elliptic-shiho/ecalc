@@ -62,6 +62,7 @@ typedef enum {
 } numtypes_t;
 
 typedef enum {
+  T_NONE,
   T_ADD,
   T_SUB,
   T_MUL,

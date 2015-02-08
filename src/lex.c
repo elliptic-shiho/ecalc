@@ -5,7 +5,7 @@
 Token* gen_token(TokenKind kind, char* value) {
   PTR(t, Token);
   MALLOC(t, Token, 1);
-  if (kind == -1) {
+  if (kind == T_NONE) {
     return NULL;
   }
   t->type = kind;
@@ -93,7 +93,7 @@ void lexical_analyze(void) {
     if (ret != NULL) {
       ll_add(g_token, ret);
     }
-    t.type = -1;
+    t.type = T_NONE;
     t.value = NULL;
     memset(buf, 2, 0);
     ret = NULL;
