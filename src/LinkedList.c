@@ -87,10 +87,8 @@ void ll_set_pos(LinkedList l, uint pos) {
         l->current = l->head;
       }
     }
-    if (l->current->pos < pos) {
-      fixedpos = pos - l->current->pos;
-    } else {
-      fixedpos = abs(pos - l->current->pos);
+    fixedpos = abs(pos - l->current->pos);
+    if (l->current->pos > pos) {
       dir = D_BACK;
     }
     for (i = 0; i < fixedpos; i++) {

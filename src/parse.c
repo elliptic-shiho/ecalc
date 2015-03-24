@@ -4,7 +4,8 @@ void parse(void) {
   Token t;
   for (;;) {
     parse_expression();
-    t = get_token();t = get_token();
+    t = get_token();
+    t = get_token();
     if (t.type == T_EOF) {
       return;
     }
@@ -47,7 +48,7 @@ void parse_term(void) {
   parse_primary_expression();
   for(;;) {
     t = get_token();
-    if (t.type != T_MUL && t.type != T_DIV && t.type != T_POW) {
+    if (t.type != T_MUL && t.type != T_DIV) {
       unget_token();
       break;
     }
@@ -57,8 +58,6 @@ void parse_term(void) {
       op = OP_MUL;
     } else if (t.type == T_DIV) {
       op = OP_DIV;
-    } else if (t.type == T_POW) {
-      op = OP_POW;
     }
     vm_add_opcode(op);
   }
@@ -84,9 +83,25 @@ void parse_not(void) {
   if (t.type != T_NOT) {
     unget_token();
   }
-  parse_split_expression();
+  parse_pow();
   if (t.type == T_NOT) {
     vm_add_opcode(OP_NOT);
+  }
+}
+
+void parse_pow (void) {
+  Token t;
+  parse_split_expression();
+  for (;;) {
+    t = get_token();
+    if (t.type != T_POW) {
+      unget_token();
+      break;
+    }
+    parse_pow();
+    if (t.type == T_POW) {
+      vm_add_opcode(OP_POW);
+    }
   }
 }
 
@@ -99,7 +114,7 @@ void parse_split_expression(void) {
     return;
   }
   vm_add_opcode(OP_PRINT);
-  parse_expression();
+  parse_primary_expression();
 }
 
 void parse_number(void) {

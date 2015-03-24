@@ -7,8 +7,6 @@
 # include <stdarg.h>
 # include <math.h>
 # include <ctype.h>
-# include "LinkedList.h"
-# include "Stack.h"
 
 #define IS_EFFECTIVE_PTR(ptr) (((ptr) != NULL) && (ptr) != ((void*)0xdeadbeef))
 #define PTR(x, type) type *x = NULL;
@@ -101,6 +99,9 @@ typedef struct {
 
 typedef unsigned int uint;
 
+# include "LinkedList.h"
+# include "Stack.h"
+
 /* at main.c */
 extern char *g_expression;
 extern LinkedList g_token;
@@ -114,6 +115,7 @@ extern void parse_expression(void);
 extern void parse_primary_expression(void);
 extern void parse_term(void);
 extern void parse_not(void);
+extern void parse_pow(void);
 extern void parse_split_expression(void);
 extern void parse_number(void);
 
@@ -128,4 +130,7 @@ extern void vm_execute(void);
 extern void vm_add_opcode(Opcode, ...);
 extern void vm_print(Stack);
 
+
+/* at libc */
+extern char *strdup(const char *);
 #endif

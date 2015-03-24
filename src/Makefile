@@ -1,1 +1,1 @@
-OBJS += p/main.o p/LinkedList.o p/lex.o p/parse.o p/vm.o p/Stack.o
+OBJS += main.o LinkedList.o lex.o parse.o vm.o Stack.o
