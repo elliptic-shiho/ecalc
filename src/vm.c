@@ -3,12 +3,18 @@
 LinkedList g_bytecode;
 typedef struct {
   Opcode code;
-  int param;
+  mpz_t *param;
 } OpcodeElem;
 
 void vm_execute (void) {
   Stack stack = stack_get_instance();
-  int i, j;
+  mpz_t *i, *j;
+  mpz_t ONE, INV_XOR;
+  mpz_init(ONE);
+  mpz_init(INV_XOR);
+  mpz_set_str(ONE, "1", 10);
+  mpz_set_str(INV_XOR, "-1", 10);
+
   void f(LLData_t t) {
     OpcodeElem *elem = t;
     switch(elem->code) {
@@ -16,49 +22,57 @@ void vm_execute (void) {
       stack_push(stack, (StackData)elem->param);
       break;
     case OP_ADD:;
-      j = (int)stack_pop(stack);
-      i = (int)stack_pop(stack);
-      stack_push(stack, (StackData)(i + j));
+      j = (mpz_t*)stack_pop(stack);
+      i = (mpz_t*)stack_pop(stack);
+      mpz_add(*i, *i, *j);
+      stack_push(stack, (StackData)i);
       break;
     case OP_SUB:;
-      j = (int)stack_pop(stack);
-      i = (int)stack_pop(stack);
-      stack_push(stack, (StackData)(i - j));
+      j = (mpz_t*)stack_pop(stack);
+      i = (mpz_t*)stack_pop(stack);
+      mpz_sub(*i, *i, *j);
+      stack_push(stack, (StackData)i);
       break;
     case OP_MUL:;
-      j = (int)stack_pop(stack);
-      i = (int)stack_pop(stack);
-      stack_push(stack, (StackData)(i * j));
+      j = (mpz_t*)stack_pop(stack);
+      i = (mpz_t*)stack_pop(stack);
+      mpz_mul(*i, *i, *j);
+      stack_push(stack, (StackData)i);
       break;
     case OP_DIV:;
-      j = (int)stack_pop(stack);
-      i = (int)stack_pop(stack);
-      stack_push(stack, (StackData)(i / j));
+      j = (mpz_t*)stack_pop(stack);
+      i = (mpz_t*)stack_pop(stack);
+      mpz_div(*i, *i, *j);
+      stack_push(stack, (StackData)i);
       break;
     case OP_POW:;
-      j = (int)stack_pop(stack);
-      i = (int)stack_pop(stack);
-      i = pow(i, j);
+      j = (mpz_t*)stack_pop(stack);
+      i = (mpz_t*)stack_pop(stack);
+      mpz_pow_ui(*i, *i, mpz_get_ui(*j));
       stack_push(stack, (StackData)i);
       break;
     case OP_OR:;
-      j = (int)stack_pop(stack);
-      i = (int)stack_pop(stack);
-      stack_push(stack, (StackData)(i | j));
+      j = (mpz_t*)stack_pop(stack);
+      i = (mpz_t*)stack_pop(stack);
+      mpz_ior(*i, *i, *j);
+      stack_push(stack, (StackData)i);
       break;
     case OP_AND:;
-      j = (int)stack_pop(stack);
-      i = (int)stack_pop(stack);
-      stack_push(stack, (StackData)(i & j));
+      j = (mpz_t*)stack_pop(stack);
+      i = (mpz_t*)stack_pop(stack);
+      mpz_and(*i, *i, *j);
+      stack_push(stack, (StackData)i);
       break;
     case OP_NOT:;
-      j = (int)stack_pop(stack);
-      stack_push(stack, (StackData)~i);
+      j = (mpz_t*)stack_pop(stack);
+      mpz_xor(*i, *j, INV_XOR);
+      stack_push(stack, (StackData)i);
       break;
     case OP_XOR:;
-      j = (int)stack_pop(stack);
-      i = (int)stack_pop(stack);
-      stack_push(stack, (StackData)(i ^ j));
+      j = (mpz_t*)stack_pop(stack);
+      i = (mpz_t*)stack_pop(stack);
+      mpz_xor(*i, *i, *j);
+      stack_push(stack, (StackData)i);
       break;
     case OP_PRINT:
       vm_print(stack);
@@ -72,29 +86,14 @@ void vm_execute (void) {
 }
 
 void vm_print(Stack stack) {
-  int data = 0;
-  uint ui;
-  int i, j;
-  char bin[32] = {0};
-  for(; stack_count(stack) > 0; data = (int)stack_pop(stack));
+  mpz_t *data;
+  for(; stack_count(stack) > 0; data = (mpz_t*)stack_pop(stack));
 
-  printf("(signed decimal)   = %d\n", data);
-  printf("(unsigned decimal) = %u\n", data);
-  printf("(hex)              = 0x%x\n", data);
+  gmp_printf("(signed decimal)   = %Zd\n", *data);
+  gmp_printf("(unsigned decimal) = %Zu\n", *data);
+  gmp_printf("(hex)              = 0x%Zx\n", *data);
   printf("(bin)              = 0b");
-
-  ui = data;
-  for(j = 0; ui != 0;ui /= 2, j++) {
-    bin[j] = ui % 2;
-  }
-  DIRECTION_FOR(j, 31, bin[j] == 0 && j >= 0, D_BACK);
-  if ( j == -1 ){
-    printf("0");
-  } else {
-    DIRECTION_FOR(i, j, i >= 0, D_BACK) {
-      printf("%d", bin[i]);
-    }
-  }
+  mpz_out_str(stdout, 2, *data);
   printf("\n\n");
 }
 
@@ -111,11 +110,11 @@ void vm_free(void) {
 }
 
 void vm_add_opcode(Opcode opcode, ...) {
-  int param = 0;
+  PTR(param, mpz_t);
   va_list ap;
   va_start(ap, opcode);
   if (opcode == OP_NUM) {
-    param = va_arg(ap, int);
+    param = va_arg(ap, mpz_t*);
   }
   PTR(d, OpcodeElem);
   MALLOC(d, OpcodeElem, 1);

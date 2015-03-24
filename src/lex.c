@@ -98,7 +98,8 @@ void lexical_analyze(void) {
     }
     t.type = T_NONE;
     t.value = NULL;
-    memset(buf, 2, 0);
+    buf[0] = 0;
+    buf[1] = 0;
     ret = NULL;
   }
 

@@ -17,6 +17,7 @@ valid expressions:
 * Linux
 * gcc
 * make
+* GNU MP
 
 # License
 This software released under the MIT license. see /LICENSE

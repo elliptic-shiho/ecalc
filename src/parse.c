@@ -27,7 +27,7 @@ void parse_expression(void) {
       break;
     }
     parse_term();
-    Opcode op;
+    Opcode op = OP_ADD;
     if (t.type == T_ADD) {
       op = OP_ADD;
     } else if (t.type == T_SUB) {
@@ -119,8 +119,11 @@ void parse_split_expression(void) {
 
 void parse_number(void) {
   numtypes_t t = NONE;
-  int value = 0;
+  PTR(value, mpz_t);
   int i = 1;
+  MALLOC(value, mpz_t, 1);
+  mpz_init2(*value, 2048);
+
   uint j = 0;
   Token token;
   token = get_token();
@@ -178,8 +181,8 @@ void parse_number(void) {
         // '0' <= c <= '9' && 'A' <= c <= 'F' && 'a' <= c <= 'f'
         // -> c - 1 <= '0' -> c == '0' or '1'
         if (ch - 1 <= '0') {
-          value *= 2;
-          value += ch - '0';
+          mpz_mul_ui(*value, *value, 2);
+          mpz_add_ui(*value, *value, ch - '0');
         } else {
           fprintf(stderr, "Error: Invalid Binary String : %02x\n", ch);
           exit(-1);
@@ -189,19 +192,19 @@ void parse_number(void) {
         // similar BINARY
         // c - 9 <= '0' == 0x30 <= c <= '9'
         if (ch - 9 <= '0') {
-          value *= 10;
-          value += ch - '0';
+          mpz_mul_ui(*value, *value, 10);
+          mpz_add_ui(*value, *value, ch - '0');
         } else {
           fprintf(stderr, "Error: Invalid Decimal String : %02x\n", ch);
           exit(-1);
         }
         break;
       case HEXADECIMAL:
-        value *= 16;
+        mpz_mul_ui(*value, *value, 16);
         if (ch <= '9') {
-          value += ch - '0';
+          mpz_add_ui(*value, *value, ch - '0');
         } else if (ch <= 'f') {
-          value += 10 + ch - 'A';
+          mpz_add_ui(*value, *value, 10 + ch - 'A');
         }
         break;
       case NONE:
@@ -211,5 +214,6 @@ void parse_number(void) {
       break;
     }
   }
-  vm_add_opcode(OP_NUM, value * i);
+  mpz_mul_ui(*value, *value, i);
+  vm_add_opcode(OP_NUM, value);
 }

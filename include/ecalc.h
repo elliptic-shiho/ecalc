@@ -7,6 +7,7 @@
 # include <stdarg.h>
 # include <math.h>
 # include <ctype.h>
+# include <gmp.h>
 
 #define IS_EFFECTIVE_PTR(ptr) (((ptr) != NULL) && (ptr) != ((void*)0xdeadbeef))
 #define PTR(x, type) type *x = NULL;
