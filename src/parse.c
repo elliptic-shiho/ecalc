@@ -45,14 +45,14 @@ void parse_expression(void) {
 
 void parse_term(void) {
   Token t;
-  parse_primary_expression();
+  parse_not();
   for(;;) {
     t = get_token();
     if (t.type != T_MUL && t.type != T_DIV) {
       unget_token();
       break;
     }
-    parse_primary_expression();
+    parse_not();
     Opcode op;
     if (t.type == T_MUL) {
       op = OP_MUL;
@@ -74,7 +74,7 @@ void parse_primary_expression(void) {
     }
   } else {
     unget_token();
-    parse_not();
+    parse_number();
   }
 }
 
@@ -125,7 +125,7 @@ void parse_split_expression(void) {
   Token t = get_token();
   if (t.type != T_SPLIT) {
     unget_token();
-    parse_number();
+    parse_primary_expression();
     return;
   }
   vm_add_opcode(OP_PRINT);

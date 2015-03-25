@@ -49,6 +49,7 @@ void vm_execute (void) {
       j = (mpz_t*)stack_pop(stack);
       i = (mpz_t*)stack_pop(stack);
       {
+        DEBUG("%d, %d", ll_get_pos(g_bytecode) + 1, ll_count(g_bytecode));
         if (ll_get_pos(g_bytecode) + 1 < ll_count(g_bytecode)) {
           ll_set_pos_relative(g_bytecode, 1);
           OpcodeElem n = *(OpcodeElem*)ll_get_current_data(g_bytecode);

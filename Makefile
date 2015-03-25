@@ -23,7 +23,7 @@ VPATH           := $(SRCDIR)
 EXTRA_FLAGS      = $(DEBUG_FLAGS)
 
 .PHONY: all
-all: $(BINDIR) debug
+all: $(BINDIR) release
 
 .PHONY: debug
 debug: EXTRA_FLAGS = $(DEBUG_FLAGS)

@@ -43,11 +43,7 @@ x = ((void*)0xdeadbeef); \
 
 # define DIRECTION_FOR(counter, init, condition, dir) for (counter = init; condition; counter = counter + ((int)dir)*1)
 
-# define EACH_ARRAY(func, array, size) do { \
-  uint __each_counter = 0; \
-  for (__each_counter = 0; __each_counter < size; func(array[__each_counter++])); \
-} while(0)
-
+# define EACH_ARRAY(size) for (uint __counter = 0; __counter < size; __counter++) 
 
 typedef enum {
   D_FORWARD = 1,

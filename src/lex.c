@@ -22,7 +22,8 @@ void lexical_analyze(void) {
 
   g_token = ll_get_instance();
 
-  void f(char c) {
+  EACH_ARRAY(strlen(g_expression)) {
+    char c = g_expression[__counter];
     c = toupper(c);
     switch(c) {
     case '+':
@@ -73,26 +74,41 @@ void lexical_analyze(void) {
     case ',':
       t.type = T_SPLIT;
       break;
-    default:
-      if ((c >= '0' && c <= '9') ||
-         ((c == 'X' || (c <= 'F' && c >= 'A')) &&
-           GET_CURRENT_TOKEN()->type == T_NUM)) {
-        buf[0] = c;
-        if (ll_count(g_token) > 0 && GET_CURRENT_TOKEN()->type == T_NUM) {
-          GET_CURRENT_TOKEN()->value = strcat(GET_CURRENT_TOKEN()->value, buf);
+    default:;
+      PTR(start, char);
+      int end = 0;
+      uint i;
+      for (i = __counter; i <= strlen(g_expression); i++) {
+        char c;
+        if (i == strlen(g_expression)) {
+          c = '\0';
         } else {
-          t.type = T_NUM;
-          t.value = strdup(buf);
+          c = toupper(g_expression[i]);
         }
-        break;
-      } else {
-        if (isspace(c)) {
-          return;
+        if ((c >= '0' && c <= '9') ||
+           ((c == 'X' || (c <= 'F' && c >= 'A')))) {
+          if(start == NULL) {
+            start = g_expression + __counter;
+          }
+          end++;
         } else {
-          fprintf(stderr, "Invalid Token: %c\n", c);
-          exit(-1);
+          if (start != NULL) {
+            t.type = T_NUM;
+            t.value = strdup(start);
+            t.value[end + 1] = '\0';
+            EACH_ARRAY((uint)(end + 1)) {
+              t.value[__counter] = toupper(t.value[__counter]);
+            }
+            break;
+          } else if (isspace(c) || c == '\0') {
+            break;
+          } else {
+            fprintf(stderr, "Invalid Token: %c\n", c);
+            exit(-1);
+          }
         }
       }
+      __counter = i - 1;
     }
     ret = gen_token(t.type, t.value);
     if (ret != NULL) {
@@ -105,8 +121,6 @@ void lexical_analyze(void) {
     buf[1] = 0;
     ret = NULL;
   }
-
-  EACH_ARRAY(f, g_expression, strlen(g_expression));
 
   ret = gen_token(T_EOF, NULL);
   DEBUG("%p", ret);
