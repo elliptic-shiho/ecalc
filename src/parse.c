@@ -83,9 +83,25 @@ void parse_not(void) {
   if (t.type != T_NOT) {
     unget_token();
   }
-  parse_pow();
+  parse_mod();
   if (t.type == T_NOT) {
     vm_add_opcode(OP_NOT);
+  }
+}
+
+void parse_mod(void) {
+  Token t;
+  parse_pow();
+  for (;;) {
+    t = get_token();
+    if (t.type != T_MOD) {
+      unget_token();
+      break;
+    }
+    parse_mod();
+    if (t.type == T_MOD) {
+      vm_add_opcode(OP_MOD);
+    }
   }
 }
 
@@ -106,8 +122,7 @@ void parse_pow (void) {
 }
 
 void parse_split_expression(void) {
-  Token t;
-  t = get_token();
+  Token t = get_token();
   if (t.type != T_SPLIT) {
     unget_token();
     parse_number();

@@ -124,6 +124,24 @@ LLData_t ll_remove_data(LinkedList l, uint pos) {
   return data;
 }
 
+int ll_search_from_value(LinkedList l, LLData_t data) {
+  int i;
+  uint pos = ll_get_pos(l);
+  for (i = 0; i < (int)ll_count(l); i++) {
+    if (ll_get_data(l, i) == data) {
+      goto END;
+    }
+  }
+  i = -1;
+END:
+  ll_set_pos(l, pos);
+  return i;
+}
+
+uint ll_contains(LinkedList l, LLData_t data) {
+  return ll_search_from_value(l, data) > 0;
+}
+
 LinkedList ll_get_sublist(LinkedList l, uint start, uint end) {
   if (end < ll_count(l)) {
     LinkedList s = ll_get_instance();

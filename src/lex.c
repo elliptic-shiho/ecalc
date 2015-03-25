@@ -47,6 +47,9 @@ void lexical_analyze(void) {
     case '/':
       t.type = T_DIV;
       break;
+    case '%':
+      t.type = T_MOD;
+      break;
     case '(':
     case '{':
       t.type = T_OPEN_BRACKET;

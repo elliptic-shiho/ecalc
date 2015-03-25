@@ -68,6 +68,7 @@ typedef enum {
   T_MUL,
   T_DIV,
   T_POW,
+  T_MOD,
   T_OR,
   T_AND,
   T_NOT,
@@ -85,6 +86,7 @@ typedef enum {
   OP_MUL,
   OP_DIV,
   OP_POW,
+  OP_MOD,
   OP_OR,
   OP_AND,
   OP_NOT,
@@ -117,6 +119,7 @@ extern void parse_primary_expression(void);
 extern void parse_term(void);
 extern void parse_not(void);
 extern void parse_pow(void);
+extern void parse_mod(void);
 extern void parse_split_expression(void);
 extern void parse_number(void);
 

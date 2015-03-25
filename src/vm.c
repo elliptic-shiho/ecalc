@@ -48,7 +48,26 @@ void vm_execute (void) {
     case OP_POW:;
       j = (mpz_t*)stack_pop(stack);
       i = (mpz_t*)stack_pop(stack);
-      mpz_pow_ui(*i, *i, mpz_get_ui(*j));
+      {
+        if (ll_get_pos(g_bytecode) + 1 < ll_count(g_bytecode)) {
+          ll_set_pos_relative(g_bytecode, 1);
+          OpcodeElem n = *(OpcodeElem*)ll_get_current_data(g_bytecode);
+          if (n.code == OP_MOD) {
+            mpz_t *k = (mpz_t*)stack_pop(stack);
+            mpz_powm(*i, *i, *j, *k);
+            goto POW_ST_PUSH;
+          }
+          ll_set_pos_relative(g_bytecode, -1);
+        }
+        mpz_pow_ui(*i, *i, mpz_get_ui(*j));
+      }
+POW_ST_PUSH:
+      stack_push(stack, (StackData)i);
+      break;
+    case OP_MOD:;
+      j = (mpz_t*)stack_pop(stack);
+      i = (mpz_t*)stack_pop(stack);
+      mpz_powm(*i, *i, ONE, *j);
       stack_push(stack, (StackData)i);
       break;
     case OP_OR:;
