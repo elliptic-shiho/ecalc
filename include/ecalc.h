@@ -43,7 +43,7 @@ x = ((void*)0xdeadbeef); \
 
 # define DIRECTION_FOR(counter, init, condition, dir) for (counter = init; condition; counter = counter + ((int)dir)*1)
 
-# define EACH_ARRAY(size) for (uint __counter = 0; __counter < size; __counter++) 
+# define EACH_ARRAY(size, counter) for (uint counter = 0; counter < size; counter++) 
 
 typedef enum {
   D_FORWARD = 1,
@@ -113,10 +113,9 @@ extern void parse(void);
 extern void parse_expression(void);
 extern void parse_primary_expression(void);
 extern void parse_term(void);
-extern void parse_not(void);
 extern void parse_pow(void);
 extern void parse_mod(void);
-extern void parse_split_expression(void);
+extern void parse_split(void);
 extern void parse_number(void);
 
 /* at lex.c */

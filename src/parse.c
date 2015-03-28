@@ -45,14 +45,14 @@ void parse_expression(void) {
 
 void parse_term(void) {
   Token t;
-  parse_not();
+  parse_mod();
   for(;;) {
     t = get_token();
     if (t.type != T_MUL && t.type != T_DIV) {
       unget_token();
       break;
     }
-    parse_not();
+    parse_mod();
     Opcode op;
     if (t.type == T_MUL) {
       op = OP_MUL;
@@ -60,32 +60,6 @@ void parse_term(void) {
       op = OP_DIV;
     }
     vm_add_opcode(op);
-  }
-}
-
-void parse_primary_expression(void) {
-  Token t = get_token();
-  if (t.type == T_OPEN_BRACKET) {
-    parse_expression();
-    t = get_token();
-    if (t.type != T_CLOSE_BRACKET) {
-      fprintf(stderr, "Syntax Error: Mismatch Bracket\n");
-      exit(-1);
-    }
-  } else {
-    unget_token();
-    parse_number();
-  }
-}
-
-void parse_not(void) {
-  Token t = get_token();
-  if (t.type != T_NOT) {
-    unget_token();
-  }
-  parse_mod();
-  if (t.type == T_NOT) {
-    vm_add_opcode(OP_NOT);
   }
 }
 
@@ -107,7 +81,7 @@ void parse_mod(void) {
 
 void parse_pow (void) {
   Token t;
-  parse_split_expression();
+  parse_primary_expression();
   for (;;) {
     t = get_token();
     if (t.type != T_POW) {
@@ -120,16 +94,31 @@ void parse_pow (void) {
     }
   }
 }
-
-void parse_split_expression(void) {
+void parse_primary_expression(void) {
   Token t = get_token();
-  if (t.type != T_SPLIT) {
+  if (t.type == T_OPEN_BRACKET) {
+    parse_expression();
+    t = get_token();
+    if (t.type != T_CLOSE_BRACKET) {
+      fprintf(stderr, "Syntax Error: Mismatch Bracket\n");
+      exit(-1);
+    }
+  } else {
     unget_token();
-    parse_primary_expression();
-    return;
+    parse_split();
   }
-  vm_add_opcode(OP_PRINT);
-  parse_primary_expression();
+}
+
+void parse_split(void) {
+  Token t = get_token();
+  if (t.type == T_SPLIT) {
+    vm_add_opcode(OP_PRINT);
+    parse_expression();
+    return;
+  } else {
+    unget_token();
+    parse_number();
+  }
 }
 
 void parse_number(void) {

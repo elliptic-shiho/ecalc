@@ -22,8 +22,8 @@ void lexical_analyze(void) {
 
   g_token = ll_get_instance();
 
-  EACH_ARRAY(strlen(g_expression)) {
-    char c = g_expression[__counter];
+  EACH_ARRAY(strlen(g_expression), i) {
+    char c = g_expression[i];
     c = toupper(c);
     switch(c) {
     case '+':
@@ -77,18 +77,18 @@ void lexical_analyze(void) {
     default:;
       PTR(start, char);
       int end = 0;
-      uint i;
-      for (i = __counter; i <= strlen(g_expression); i++) {
+      uint j;
+      for (j = i; j <= strlen(g_expression); j++) {
         char c;
-        if (i == strlen(g_expression)) {
+        if (j == strlen(g_expression)) {
           c = '\0';
         } else {
-          c = toupper(g_expression[i]);
+          c = toupper(g_expression[j]);
         }
         if ((c >= '0' && c <= '9') ||
            ((c == 'X' || (c <= 'F' && c >= 'A')))) {
           if(start == NULL) {
-            start = g_expression + __counter;
+            start = g_expression + i;
           }
           end++;
         } else {
@@ -96,8 +96,8 @@ void lexical_analyze(void) {
             t.type = T_NUM;
             t.value = strdup(start);
             t.value[end + 1] = '\0';
-            EACH_ARRAY((uint)(end + 1)) {
-              t.value[__counter] = toupper(t.value[__counter]);
+            EACH_ARRAY((uint)(end + 1), j) {
+              t.value[j] = toupper(t.value[j]);
             }
             break;
           } else if (isspace(c) || c == '\0') {
@@ -108,7 +108,7 @@ void lexical_analyze(void) {
           }
         }
       }
-      __counter = i - 1;
+      i = j - 1;
     }
     ret = gen_token(t.type, t.value);
     if (ret != NULL) {
